@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Awaiting Response</title>
+    <style>
+        * {
+            font-family: "Open Sans", sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <center>
+        <br />
+        <h1>Redirecting..</h1>
+        <p>You will be redirected in <span id="seconds-holder"></span> seconds.<br /><br /> If your browser does not
+            redirect you automatically click <a href="" id="link">here</a>.
+        </p>
+    </center>
+</body>
+<script>
+    class countdownTimer {
+        constructor(elementId, seconds, redirectUrl) {
+            this._newUrl = redirectUrl;
+            this._intvl = null;
+            this._selector = elementId;
+            this._seconds = seconds;
+
+            document.getElementById("link").href = this._newUrl;
+            this.start();
+        }
+        start() {
+            var _this = this;
+            _this.updateSecs();
+            this._intvl = setInterval(function () {
+                _this.updateSecs();
+            }, 1000);
+        }
+        updateSecs() {
+            document.getElementById(this._selector).innerHTML = this._seconds;
+            this._seconds--;
+            if (this._seconds == -1) {
+                clearInterval(this._intvl);
+                this.redirect();
+            }
+        }
+        redirect() {
+            document.location.href = this._newUrl;
+        }
+    }
+
+    //And now invoke
+    var co = new countdownTimer("seconds-holder", 10, 'http://35.192.148.73:3000/');
+
+</script>
+
+</html>
