@@ -20,6 +20,15 @@ from backendApi import settings
 from io import BytesIO
 from django.http.response import HttpResponse
 
+from backendApi import settings
+from django.core.mail import send_mail
+from .models import Response
+
+#html email sending
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
 
 @csrf_exempt       
 def fileDownload(request):
@@ -43,6 +52,7 @@ def fileDownload(request):
         worksheet.write('C1', 'Organization Name', cell_format)
         worksheet.write('D1', 'Address', cell_format)
         worksheet.write('E1', 'Price (in Rupees)', cell_format)
+        worksheet.write('F1', 'Date', cell_format)
         workbook.close()
         newUrl = os.path.join(settings.BASE_DIR,  'Template.xlsx')
         if os.path.exists(newUrl):
@@ -54,4 +64,88 @@ def fileDownload(request):
                 return response
     except Exception as e:
         print(e)
-        return JsonResponse({ "status" : 200, "success": "User does not exist but logging out"})
+        return JsonResponse({ "status" : 400, "success": "User does not exist but logging out"})
+
+
+@csrf_exempt       
+def sendMail(request):
+    try:
+        subject = request.POST["heading"]
+        instructions = request.POST["instructions"]
+        attention = request.POST["attention"]
+        message = request.POST["message"]
+        footer = request.POST["footer"]
+        userId = request.POST["userId"]
+        toMail = request.POST["email"]
+        attachment = request.FILES["attachment"]
+        pathToFIle = attachment.temporary_file_path()
+        url = settings.HOSTED_URL+"/api/excel/feedbackPage/" + userId +"/" +toMail + "/"
+        to = toMail
+        UserModel = get_user_model()
+        user = UserModel.objects.get(id=userId)
+        # res = send_mail(subject, msg, settings.EMAIL_HOST_USER, [to])
+        html_content = render_to_string("sendMail.html", {"instructions" : instructions, "attention" :attention, "message": message, "footer" : footer, "url" :url })
+        text_content = strip_tags(html_content)
+        email = EmailMultiAlternatives(
+            subject,
+            text_content,
+            user.email,
+            [to]
+        )
+        attachmentFile = open(pathToFIle, 'rb')
+        email.attach(attachment.name, attachmentFile.read())   
+        email.attach_alternative(html_content, "text/html")
+        email.send()
+        return JsonResponse({ "status" : 200, "success": "Mail sent"})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"status": 400, "success": "Mail sent"})
+        
+
+@csrf_exempt       
+def feedback(request,id,mail):
+    try:
+        print(id,mail)
+        desc= request.POST["description"]
+        resp = request.POST["response"]
+        print(id,mail,desc,resp)
+
+        newObj = Response(username_id=id, response=resp, description=desc, respose_email=mail)
+        newObj.save()
+
+        
+
+        return JsonResponse({ "status" : 200, "success": "Mail sent"})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"status": 400, "success": "Mail sent"})
+        
+
+@csrf_exempt       
+def feedbackPage(request,id,mail):
+    try:
+        return render(request, "response.html")
+      
+    except Exception as e:
+        print(e)
+        return JsonResponse({"status": 400, "success": "Mail sent"})
+        
+
+@csrf_exempt       
+def allResponse(request,id):
+    try:
+        allData = Response.objects.filter(username_id=id)
+        print(allData)
+        sendData=[]
+        for data in allData:
+            a = {}
+            a["senderMail"] = data.respose_email
+            a["response"] = data.response
+            a["description"] = data.description
+            sendData.append(a)
+            
+        return JsonResponse(sendData,safe=False)
+      
+    except Exception as e:
+        print(e)
+        return JsonResponse({ "status" : 400, "success": "Mail sent"})

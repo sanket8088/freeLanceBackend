@@ -26,6 +26,7 @@ def generateToken():
 def signin(request):
     if not request.method == "POST":
         return JsonResponse({"status" : 400, "error": "Send a post request with valid parameters only."})
+    print(request.POST)
 
         
     username = request.POST["email"]

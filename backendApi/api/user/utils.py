@@ -25,7 +25,7 @@ def sendMail(instance,message):
     # print("True", res)
 
 def emailConfirmation(instance,message):
-    subject = "SiteRecon New User Registration"
+    subject = "New User Registration"
     msg = message
     to = instance
     # res = send_mail(subject, msg, settings.EMAIL_HOST_USER, [to])

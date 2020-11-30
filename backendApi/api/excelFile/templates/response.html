@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="heading">
+            <h1>Response Recorder</h1>
+        </div>
+        <div class="form-container">
+            <div>Select your response approval</div>
+            <select name="yesNo" id="options">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+
+        <div class="description">
+            <textarea id="textArea" placeholder="Do you want to add some notes"></textarea>
+        </div>
+        <input id="submit_form" type="button" value="Submit">
+    </div>
+
+</body>
+
+
+<script>
+    var sub = document.getElementById("submit_form")
+    sub.addEventListener("click", () => {
+        var loc = window.location.pathname
+        userId = loc.split("/")[4]
+        senderId = loc.split("/")[5]
+        console.log(userId, senderId)
+        var desc = document.getElementById("textArea").value
+        var resBool = document.getElementById("options").value
+        var data = new FormData();
+        data.append('description', desc);
+        data.append('response', resBool);
+        postUrl = `http://127.0.0.1:8000/api/excel/feedback/${userId}/${senderId}/`
+        console.log(postUrl)
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', postUrl, true);
+        console.log("hello")
+        xhr.send(data);
+    })
+</script>
+
+</html>

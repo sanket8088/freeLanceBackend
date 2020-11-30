@@ -8,12 +8,13 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=100)
     username=None
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name"]
+    REQUIRED_FIELDS = ["first_name", "gst"]
     session_token = models.CharField(max_length=100, default=0)
     contact_number = models.CharField(max_length=20, blank=True)
     address = models.CharField(max_length=200, blank=True)
     organisation = models.CharField(max_length=100, blank=True)
     totalCredits = models.IntegerField(default=10)
+    gst = models.CharField(max_length=100, default=0, null=True)
     is_activated = models.BooleanField(default=True)
     is_deleted = models.BooleanField(default=False)
     reset_key = models.CharField(max_length=500, default=0)
