@@ -8,20 +8,28 @@
 </head>
 
 <body>
-    <div class="main-container">
+    <div class="main-container" style="width:800px; margin-left:auto; margin-right:auto; text-align:center">
         <div class="heading">
             <h1>Response Recorder</h1>
         </div>
-        <div class="form-container">
+        <div class="form-container" style="display: flex;
+    width: 37%;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: space-between;
+    margin-bottom: 20px">
             <div>Select your response approval</div>
-            <select name="yesNo" id="options">
+            <div>
+            <select style="width:75px" name="yesNo" id="options">
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
             </select>
+            </div>
         </div>
 
         <div class="description">
-            <textarea id="textArea" placeholder="Do you want to add some notes"></textarea>
+            <textarea style="width: 100%;
+    height: 200px;" id="textArea" placeholder="Comment down your response here"></textarea>
         </div>
         <input id="submit_form" type="button" value="Submit">
     </div>
