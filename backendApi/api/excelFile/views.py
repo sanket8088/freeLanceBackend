@@ -22,12 +22,13 @@ from django.http.response import HttpResponse
 
 from backendApi import settings
 from django.core.mail import send_mail
-from .models import Response
+from .models import Response, SendMailSave
 
 #html email sending
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from datetime import datetime
 
 
 @csrf_exempt       
@@ -77,14 +78,20 @@ def sendMail(request):
         footer = request.POST["footer"]
         userId = request.POST["userId"]
         toMail = request.POST["email"]
+        organization = request.POST["organization"]
+        name = request.POST["name"]
+        amount = request.POST["amount"]
         attachment = request.FILES["attachment"]
+        cc="['sanket.nihal@gmail.com]"
+        file = SendMailSave(username_id=userId, subject=subject, instructions=instructions, attention=attention, message=message, footer=footer, toMail=toMail,amount = amount, name =name, organization = organization, responded=0)
+        file.save()
         pathToFIle = attachment.temporary_file_path()
-        url = settings.HOSTED_URL+"/api/excel/feedbackPage/" + userId +"/" +toMail + "/"
+        url = settings.HOSTED_URL+"/api/excel/feedbackPage/" + str(userId) +"/" +toMail + "/" +str(file.id)+"/"
         to = toMail
         UserModel = get_user_model()
         user = UserModel.objects.get(id=userId)
         # res = send_mail(subject, msg, settings.EMAIL_HOST_USER, [to])
-        html_content = render_to_string("sendMail.html", {"instructions" : instructions, "attention" :attention, "message": message, "footer" : footer, "url" :url })
+        html_content = render_to_string("sendMail.html", {"instructions" : instructions, "attention" :attention, "message": message, "footer" : footer, "url" :url,  })
         text_content = strip_tags(html_content)
         email = EmailMultiAlternatives(
             subject,
@@ -103,18 +110,14 @@ def sendMail(request):
         
 
 @csrf_exempt       
-def feedback(request,id,mail):
+def feedback(request, id, mail):
     try:
-        print(id,mail)
         desc= request.POST["description"]
         resp = request.POST["response"]
-        print(id,mail,desc,resp)
-
-        newObj = Response(username_id=id, response=resp, description=desc, respose_email=mail)
+        emailId = int(request.POST["emailId"])
+        SendMailSave.objects.filter(id=emailId).update(responded=1)
+        newObj = Response(username_id=id, response=resp, description=desc, respose_email=mail, emailReply_id = emailId)
         newObj.save()
-
-        
-
         return JsonResponse({ "status" : 200, "success": "Mail sent"})
     except Exception as e:
         print(e)
@@ -122,14 +125,83 @@ def feedback(request,id,mail):
         
 
 @csrf_exempt       
-def feedbackPage(request,id,mail):
+def feedbackPage(request,id,mail,mailId):
     try:
         return render(request, "response.html")
-      
     except Exception as e:
         print(e)
         return JsonResponse({"status": 400, "success": "Mail sent"})
         
+
+@csrf_exempt       
+def noResponse(request,id):
+    try:
+        allData = SendMailSave.objects.filter(username_id=id).filter(responded=0)
+        sendData=[]
+        for data in allData:
+            temp={}
+            temp["id"] =data.id
+            temp["subject"] =data.subject
+            temp["toMail"] =data.toMail
+            temp["organization"]=data.organization
+            temp["amount"] =data.amount
+            temp["date"] = data.created_at
+            sendData.append(temp)
+        return JsonResponse(sendData,safe=False)
+    except Exception as e:
+        print(e)
+        return JsonResponse({"status": 400, "success": "Mail sent"})
+        
+
+
+@csrf_exempt       
+def compareMails(request,id):
+    try:
+        allEmail = SendMailSave.objects.filter(username_id=id)
+        
+        allData = Response.objects.filter(username_id=id)
+        print(allData)
+        print(allEmail)
+           
+        return JsonResponse({ "status" : 200, "success": "Mail sent", "totalMail" : len(allEmail) , "responsedMail" : len(allData)})
+      
+    except Exception as e:
+        print(e)
+        return JsonResponse({ "status" : 400, "success": "Mail sent"})
+
+
+
+@csrf_exempt       
+def resendMail(request,id):
+    try:
+        allData = SendMailSave.objects.get(id=id)
+        toMail =allData.toMail
+        userId =allData.username_id
+        instructions =allData.instructions
+        attention = allData.attention
+        message= allData.message
+        footer =allData.footer
+        subject= allData.subject
+        # to = allData["toMail"]
+        url = settings.HOSTED_URL+"/api/excel/feedbackPage/" + str(userId) +"/" +toMail + "/" +str(id)+"/"
+        html_content = render_to_string("sendMail.html", {"instructions" : instructions, "attention" :attention, "message": message, "footer" : footer, "url" :url,  })
+        text_content = strip_tags(html_content)
+        UserModel = get_user_model()
+        user = UserModel.objects.get(id=userId)
+        email = EmailMultiAlternatives(
+            subject,
+            text_content,
+            user.email,
+            [toMail]
+        )
+        email.attach_alternative(html_content, "text/html")
+        email.send()
+        return JsonResponse({ "status" : 200, "success": "Mail sent"})
+      
+    except Exception as e:
+        print(e)
+        return JsonResponse({ "status" : 400, "error": "Mail not sent"})
+
 
 @csrf_exempt       
 def allResponse(request,id):

@@ -35,12 +35,14 @@
         var loc = window.location.pathname
         userId = loc.split("/")[4]
         senderId = loc.split("/")[5]
+        emailId = loc.split("/")[6]
         console.log(userId, senderId)
         var desc = document.getElementById("textArea").value
         var resBool = document.getElementById("options").value
         var data = new FormData();
         data.append('description', desc);
         data.append('response', resBool);
+        data.append('emailId', emailId);
         postUrl = `http://127.0.0.1:8000/api/excel/feedback/${userId}/${senderId}/`
         console.log(postUrl)
         var xhr = new XMLHttpRequest();
