@@ -86,13 +86,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 
-        'NAME': config("DATABASE_NAME"),
+        'NAME': "econfirm_djangoApp",
 
-        'USER': config("DATABASE_USER_NAME"),
+        'USER': "econfirm_user8088",
 
-        'PASSWORD': config("DATABASE_PASSWORD"),
+        'PASSWORD': "Gmail@123",
 
-        'HOST': config("DATABASE_HOST"),
+        'HOST': "103.212.121.114",
 
         'PORT': "",
     }
@@ -157,7 +157,7 @@ REST_FRAMEWORK = {
 # EMAIL_USE_TLS = True
 # EMAIL_HOST = config("EMAIL_HOST")
 # EMAIL_PORT = config("EMAIL_PORT")
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_USER = "sanket.nihal2@gmail.com"
 # EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
 # EMAIL_USE_TLS = True
@@ -168,13 +168,12 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 
 EMAIL_HOST =  'smtp.sendgrid.net'
 EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = config("SMTP_KEY")
+EMAIL_HOST_PASSWORD = "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"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-
-HOSTED_URL = config("HOSTED_URL")
-UI_URL = config("UI_URL")
+HOSTED_URL= "http://127.0.0.1:8000"
+UI_URL =  "http://127.0.0.1:3000"
 
 FILE_UPLOAD_HANDLERS = ['django.core.files.uploadhandler.TemporaryFileUploadHandler']
