@@ -86,13 +86,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 
-        'NAME': "econfirm_djangoApp",
+        'NAME': "postgres",
 
-        'USER': "econfirm_user8088",
+        'USER': "postgres",
 
-        'PASSWORD': "Gmail@123",
+        'PASSWORD': "sanket",
 
-        'HOST': "103.212.121.114",
+        'HOST': "localhost",
 
         'PORT': "",
     }
