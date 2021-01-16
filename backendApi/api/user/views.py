@@ -120,9 +120,9 @@ def forgot_password(request):
     mail = request.POST["email"]
     UserModel = get_user_model()
     try:
-  
         user = UserModel.objects.get(email=mail)
         reset_token = user.reset_key
+        print(mail,reset_token)
         sendMail(mail,reset_token)
         return JsonResponse({"status" : 200, "success": "A reset link has been sent on registered mail id."})
     except Exception as e:

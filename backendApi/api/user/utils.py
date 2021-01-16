@@ -17,7 +17,7 @@ def sendMail(instance,message):
     email = EmailMultiAlternatives(
         subject,
         text_content,
-        settings.EMAIL_HOST_USER,
+        "sanket.nihal2@gmail.com",
         [to]
     )
     email.attach_alternative(html_content, "text/html")
