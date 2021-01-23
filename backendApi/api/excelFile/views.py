@@ -29,6 +29,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from datetime import datetime
+from .serializers import AllUserSerializer
 
 
 @csrf_exempt       
@@ -220,4 +221,40 @@ def allResponse(request,id):
       
     except Exception as e:
         print(e)
-        return JsonResponse({ "status" : 400, "success": "Mail sent"})
+        return JsonResponse({"status": 400, "success": "Mail sent"})
+        
+
+@csrf_exempt
+def allUserOrders(request, id):
+    if not request.method == "GET":
+        return JsonResponse({"status": 400, "error": "Send a get request."})
+    try:
+        UserModel = get_user_model()
+        user = UserModel.objects.get(pk=id)
+        allData = SendMailSave.objects.filter(username_id=id).values_list("organization", flat = True).distinct()
+        return JsonResponse({"status": 200, "data" : list(allData)})
+    except Exception as e:
+        return JsonResponse({"status": 400, "error": "Not a registered user"})
+        
+
+@csrf_exempt
+def singleUserCompany(request):
+    if not request.method == "POST":
+        return JsonResponse({"status": 400, "error": "Send a post request."})
+    try:
+        user = request.POST["userId"]
+        companyName = request.POST["company"]
+        print(user,companyName)
+        allData = SendMailSave.objects.filter(username_id=user).filter(organization=companyName)
+        # import pdb; pdb.set_trace()
+        dataAll = allData.values()
+        allRecords=[]
+        for i in dataAll:
+            allRecords.append(i)
+        
+        return JsonResponse({"status": 200, "data" :allRecords})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"status" : 400, "error": "Not a registered user"})
+    
+

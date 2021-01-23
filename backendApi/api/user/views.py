@@ -84,11 +84,21 @@ def signout(request, id):
 
 @csrf_exempt
 def update(request):
+    # import pdb; pdb.set_trace()
     if not request.method == "POST":
         return JsonResponse({ "status" : 400, "error": "Send a post request with valid parameters only."})
     UserModel = get_user_model()
-    if "email" in request.POST:
-        mail = request.POST["email"]
+    
+    try:
+        for key in dict(request.POST).keys():
+            allVal = json.loads(key)
+    except Exception as e:
+        allVal={}
+
+    if "userId" in allVal:
+        userId = allVal["userId"]
+        tempUser = UserModel.objects.get(pk=userId)
+        mail =tempUser.email
     elif request.POST["resetKey"]:
         resetKey = request.POST["resetKey"]
         try:
@@ -96,17 +106,25 @@ def update(request):
             mail = tempUser.email
         except Exception as e:
             return JsonResponse({ "status" : 400, "error" : "Invalid Token"})
-
     try:
         user = UserModel.objects.get(email=mail)
         user.session_token = 0
-        for key, val in dict(request.POST).items():
-            if key != "email":
-                if key == "password":
-                    user.set_password(request.POST[key])
-                else:
-                    setattr(user, key, val[0])
-        user.save()
+        if "userId" in allVal:
+            for key, val in allVal.items():
+                if key != "email":
+                    if key == "password":
+                        user.set_password(request.POST[key])
+                    else:
+                        setattr(user, key, val)
+            user.save()
+        else:
+            for key, val in dict(request.POST).items():
+                if key != "email":
+                    if key == "password":
+                        user.set_password(request.POST[key])
+                    else:
+                        setattr(user, key, val[0])
+            user.save()
     except Exception as e:
         return JsonResponse({ "status" : 400, "error" : "mail id does not exist"})
     return JsonResponse({"status" : 200,"success" : "upadted successful"})
@@ -150,6 +168,22 @@ def confirm_email(request,reset_token):
     return render(request, "awaiting_response.html") 
     # return JsonResponse({"status" : 200, "success": "upadted successful"})
 
+
+def userInfo(request, id):
+    if not request.method == "GET":
+        return JsonResponse({"status": 400, "error": "Send a get request."})
+    try:
+        UserModel = get_user_model()
+        user = UserModel.objects.get(pk=id)
+        allData = {}
+        allData["first_name"] =user.first_name
+        allData["contact_number"] =user.contact_number
+        allData["address"] =user.address
+        allData["gst"] =user.gst
+        allData["organisation"] = user.organisation
+        return JsonResponse({"status": 200, "data" : allData})
+    except Exception as e:
+        return JsonResponse({"status" : 400, "error": "Not a registered user"})
 
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes_by_action = {"create": {AllowAny}}

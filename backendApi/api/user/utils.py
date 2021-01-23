@@ -17,7 +17,7 @@ def sendMail(instance,message):
     email = EmailMultiAlternatives(
         subject,
         text_content,
-        "sanket.nihal2@gmail.com",
+        "support@econfirm.in",
         [to]
     )
     email.attach_alternative(html_content, "text/html")
@@ -34,7 +34,7 @@ def emailConfirmation(instance,message):
     email = EmailMultiAlternatives(
         subject,
         text_content,
-        "sanket.nihal2@gmail.com",
+        "support@econfirm.in",
         [to]
     )
     email.attach_alternative(html_content, "text/html")

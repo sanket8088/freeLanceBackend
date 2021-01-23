@@ -12,5 +12,6 @@ urlpatterns = [
     path("forgot_password/", views.forgot_password, name="forgot_password"),
     path("reset_password/<str:reset_token>/", views.reset_password, name="reset_password"),
     path("confirm_email/<str:reset_token>/", views.confirm_email, name="reset_password"),
+    path("userInfo/<int:id>/", views.userInfo, name="userInfo"),
     path("", include(router.urls))
 ]

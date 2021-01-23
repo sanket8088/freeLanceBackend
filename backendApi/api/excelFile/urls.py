@@ -13,4 +13,7 @@ urlpatterns = [
     path("noResponse/<int:id>/", views.noResponse, name="noResponse"),
     path("compareMails/<int:id>/", views.compareMails, name="compareMails"),
     path("resendMail/<int:id>/", views.resendMail, name="resendMail"),
+    path("allUserOrders/<int:id>/", views.allUserOrders, name="allUserOrders"),
+    path("singleUserCompany/", views.singleUserCompany, name="singleUserCompany"),
+
 ]
