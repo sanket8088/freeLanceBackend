@@ -191,7 +191,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-HOSTED_URL= "http://139.59.64.114:8000"
-UI_URL =  "http://139.59.64.114:3000"
+HOSTED_URL= "http://143.110.251.247:8000"
+UI_URL =  "http://143.110.251.247:3000"
 
 FILE_UPLOAD_HANDLERS = ['django.core.files.uploadhandler.TemporaryFileUploadHandler']
