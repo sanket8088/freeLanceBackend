@@ -186,7 +186,7 @@ EMAIL_HOST_USER = "support@econfirm.in"
 
 EMAIL_HOST =  'smtp.sendgrid.net'
 EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = "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
+EMAIL_HOST_PASSWORD = "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"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
